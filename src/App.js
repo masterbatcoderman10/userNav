@@ -40,50 +40,94 @@ const auth = getAuth();
 const db = getFirestore(app);
 
 function App() {
-
   const [user] = useAuthState(auth);
-  console.log(user);
-  
+
   return (
     <>
-      <Navbar userD={user}/>
+      <Navbar userD={user} />
       {user ? <Content /> : <SignIn />}
     </>
   );
 }
 
 function Content() {
-  return (
-    <div>
 
+  const {displayName, email, photoURL, uid} = auth.currentUser;
+
+
+  return (
+    <div className='container'>
+      <div className='row'>
+          <div className='col-md-2'></div>
+          <div className='col-md-8 mt-5 info-holder'>
+            <h1 className="mb-4 mt-2">Welcome {displayName}</h1>
+            <hr />
+            <div>
+            <label><strong>User ID</strong></label>
+            <p className="text-muted">{uid}</p>
+            </div>
+            <div>
+            <label><strong>Email</strong></label>
+            <p className="text-muted">{email}</p>
+            </div>
+            <div>
+            <label><strong>Username</strong></label>
+            <p className="text-muted">{displayName}</p>
+            </div>
+            <div>
+            <label><strong>Profile Picture</strong></label>
+              <img className="d-block my-2" src={photoURL}/>
+            </div>
+            
+
+
+          </div>
+          <div className='col-md-2'></div>
+      	</div> 
     </div>
   )
+  
 }
 
-function UserComponent({user}) {
+function UserComponent() {
+  const { displayName, photoURL } = auth.currentUser;
+  
 
-  const {name, photoURL} = auth.currentUser;
-
+  console.log(auth.currentUser)
   return (
-    <div className="d-flex dropdown">
+    <div className="">
       <span className="photo me-1">
-        <img src={photoURL}>
-        </img>
+        <img className="profile-pic" src={auth.currentUser.photoURL}></img>
       </span>
-      <span>
-      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            {name}
-          </a>
+      <span className="align-middle ms-1 dropdown">
+        <span
+          className="dropdown-toggle"
+          
+          id="navbarDropdown"
+          role="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          {displayName}
+        </span>
+        <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
+          <li>
+            <a className="dropdown-item" href="#">
+              Edit
+            </a>
+          </li>
+          
+        </ul>
       </span>
 
-      <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
-        <li><a class="dropdown-item" href="#">View Profile</a></li>
-      </ul>
+      {/* <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
+        <li><a className="dropdown-item" href="#">View Profile</a></li>
+      </ul> */}
     </div>
-  )
+  );
 }
 
-function Navbar({userD}) {
+function Navbar({ userD }) {
   return (
     <nav className="navbar navbar-expand-md navbar-light bg-light">
       <div className="container-fluid">
@@ -110,7 +154,11 @@ function Navbar({userD}) {
               </a>
             </li>
           </ul>
-          {userD ? <UserComponent /> : <li className="nav-item">Not Signed In</li>}
+          {userD ? (
+            <UserComponent />
+          ) : (
+            <li className="nav-item">Not Signed In</li>
+          )}
         </div>
       </div>
     </nav>
@@ -118,10 +166,9 @@ function Navbar({userD}) {
 }
 
 function SignIn() {
-
   const signInWithGoogle = () => {
-    signInWithPopup(auth, provider)
-  }
+    signInWithPopup(auth, provider);
+  };
 
   return (
     <>
@@ -130,7 +177,10 @@ function SignIn() {
           <div className="col-12 p-5 m-5 " id="signin">
             <div className="signin-box mx-auto">
               <div className="google-signin">
-                <button className="btn btn-success mx-auto g" onClick={signInWithGoogle}>
+                <button
+                  className="btn btn-success mx-auto g"
+                  onClick={signInWithGoogle}
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
